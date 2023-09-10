@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import validator from 'validator';
-import zxcvbn from 'zxcvbn';
 import Home from "./Home";
-import {MDBCard, MDBCardBody, MDBContainer, MDBInput, MDBRadio} from "mdb-react-ui-kit";
+import { MDBCard, MDBCardBody, MDBContainer, MDBInput, MDBRadio } from "mdb-react-ui-kit";
 import UserService from "../Services/UserService";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-//import CryptoJS from 'crypto-js';
-
-
 
 function Signup() {
     const [showForm, setShowForm] = useState(true);
@@ -18,50 +13,49 @@ function Signup() {
         phone: '',
         password: '',
         confirmPassword: '',
-        role:''
+        role: ''
     });
 
     const [errors, setErrors] = useState({});
-
-    /*async function hashPassword(password) {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        return hashedPassword;
-    }*/
 
     async function handleRegister(e) {
         e.preventDefault();
         setErrors({}); // Clear existing errors
         const newErrors = {};
 
-        // Validate name
+
+        const nameRegex = /^[A-Za-z\s]+$/;
         if (!formData.name) {
             newErrors.name = 'Name is required';
+        } else if (!nameRegex.test(formData.name)) {
+            newErrors.name = 'Invalid name format';
         }
 
-        // Validate email
+
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         if (!formData.email) {
             newErrors.email = 'Email is required';
-        } else if (!validator.isEmail(formData.email)) {
+        } else if (!emailRegex.test(formData.email)) {
             newErrors.email = 'Invalid email format';
         }
 
-        // Validate phone
+
+        const phoneRegex = /^\d{10}$/;
         if (!formData.phone) {
             newErrors.phone = 'Phone number is required';
-        } else if (!validator.isMobilePhone(formData.phone)) {
-            newErrors.phone = 'Invalid phone number';
-        } else if (formData.phone.length !== 10) {
-            newErrors.phone = 'Phone number should be 10 digits';
+        } else if (!phoneRegex.test(formData.phone)) {
+            newErrors.phone = 'Invalid phone number (should be 10 digits)';
         }
 
-        // Validate password strength
-        const passwordStrength = zxcvbn(formData.password).score;
-        if (passwordStrength < 3) {
-            newErrors.password = 'Password is too weak';
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\-]).{8,}$/;
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'Invalid password format';
         }
 
-        // Validate password and confirm password match
+
         if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match';
         }
@@ -75,13 +69,15 @@ function Signup() {
                 email: formData.email,
                 phone: formData.phone,
                 password: formData.password,
-                role:formData.role
+                role: formData.role
             };
+            await UserService.addUser(userData);
+            toast.success("Registered Successfully");
+                                                                                                                                                          // Example: UserService.registerUser(userData);
         }
     }
 
-
-    return (
+return (
         <div>
             <div className="carousel-wrapper">
                 <Home/>

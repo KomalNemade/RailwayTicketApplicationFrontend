@@ -30,6 +30,7 @@ function Signin(props) {
             localStorage.setItem('userRole', formData.role);
             localStorage.setItem('email',formData.email);
             props.setUserRole(formData.role);
+            toast("login successful");
             window.location.replace('/UserHome')
             setShowForm(false);
         } else {
