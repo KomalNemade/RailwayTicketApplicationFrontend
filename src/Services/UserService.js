@@ -3,11 +3,11 @@ const User_ADD="http://localhost:8085/user/add";
 const User_GET="http://localhost:8085/user/";
 const User_Login="http://localhost:8085/user/login";
 const Trains_GET="http://localhost:8085/trains/";
-const Trains_No="http://localhost:8085/trains/trainno";
-const Trains_Source="http://localhost:8085/trains/src";
-const Trains_Destination="http://localhost:8085/trains/dest";
-const Trains_Date="http://localhost:8085/trains/bydate";
+const GET_Train="http://localhost:8085/trains/search"
 const Add_Train="http://localhost:8085/trains/add";
+const Get_TrainById="http://localhost:8085/trains/id/";
+const Add_Ticket="http://localhost:8085/ticket/add";
+const Get_Tickets="http://localhost:8085/ticket/";
 class UserService {
     addUser(user) {
         return axios.post(User_ADD, user);
@@ -25,26 +25,32 @@ class UserService {
         return axios.get(Trains_GET);
     }
 
-    getNo() {
-        return axios.get(Trains_No);
-    }
-
-    getSource() {
-        return axios.get(Trains_Source);
-    }
-
-    getDestination() {
-        return axios.get(Trains_Destination);
-    }
-
-    getDate() {
-        return axios.get(Trains_Date);
-    }
+   getTrain(src,des){
+        return axios.get(GET_Train,{
+           params: {
+               source: src,
+                   destination: des
+           }
+       })
+   }
 
     addTrain(train) {
-        console.log(train);
         return axios.post(Add_Train,train);
     }
+
+    getTrainById(id){
+        return axios.get(Get_TrainById+id)
+    }
+
+    addTicket(ticket) {
+        return axios.post(Add_Ticket,ticket);
+    }
+    getBookings(){
+        return axios.get(Get_Tickets);
+    }
+
+
+
 
 
 }

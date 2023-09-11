@@ -6,7 +6,7 @@ import CarouselComponent from "../CarouselComponent";
 import Home from "../Home";
 import * as trains from "react-bootstrap/ElementChildren";
 
-function TrainDate(){
+function Search(){
     const[sdate,setDate]=useState('');
     const[src,setSrc]=useState('');
     const[dest,setDest]=useState('');
@@ -14,14 +14,12 @@ function TrainDate(){
     const [showForm, setShowForm] = useState(true);
     const [showTable, setShowTable] = useState(false);
     //const today = new Date().toISOString().substr(0, 10);
-    const[events,settrain]=useState([]);
+    const[trains,settrain]=useState([]);
     const Search = async (e) => {
         e.preventDefault();
             try {
-                const response = await UserService.getEventBydate(sdate);
+                const response = await UserService.getTrain(src,dest);
                 settrain(response.data);
-
-                console.log(trains);
 
             } catch (error) {
                 console.error("Error fetching trains:", error);
@@ -34,7 +32,7 @@ function TrainDate(){
         window.location.replace("/UserHome");
     }
     const Book=(train)=>{
-        const queryParams = new URLSearchParams({ event: JSON.stringify(train) });
+        const queryParams = new URLSearchParams({ train: JSON.stringify(train) });
         window.location.replace(`/BookTicket?${queryParams.toString()}`);
 
     }
@@ -50,7 +48,7 @@ function TrainDate(){
                             <div className='mask gradient-custom-3'></div>
                             <MDBCard className='m-5' style={{maxWidth: '600px'}}>
                                 <MDBCardBody className='px-5'>
-                                    <h2 className="text-uppercase text-center mb-5">Where is my Train</h2>
+                                    <h2 className="text-uppercase text-center mb-5">Search Train</h2>
                                     <label>Date</label>
                                     <MDBInput
                                         wrapperClass='mb-1'
@@ -81,7 +79,7 @@ function TrainDate(){
                 {showTable&&(
                     <div className="container custom-container" >
                         <center>
-                            <h1 style={{ fontSize: '50px' ,fontFamily:'Montserrat'}}>Trains Scheduled On {date}</h1>
+                            <h1 style={{ fontSize: '50px' ,fontFamily:'Montserrat'}}>Trains Available</h1>
                             <div className="row">
                                 <table className='table table-striped table-bordered' style={{width: '100%', background: 'whitesmoke',fontFamily:'Montserrat' }} >
                                     <thead className='table-dark'>
@@ -91,9 +89,9 @@ function TrainDate(){
                                         <th style={{fontSize:'20px'}}><b>Source</b></th>
                                         <th style={{fontSize:'20px'}}><b>Destination</b></th>
                                         <th style={{fontSize:'20px'}}><b>Date</b></th>
-                                        <th style={{fontSize:'20px'}}><b>seat</b></th>
-                                        <th style={{fontSize:'20px'}}><b>price</b></th>
-
+                                        <th style={{fontSize:'20px'}}><b>Seats</b></th>
+                                        <th style={{fontSize:'20px'}}><b>Price</b></th>
+                                        <th style={{fontSize:'20px'}}><b>Action</b></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -126,4 +124,4 @@ function TrainDate(){
         );
 }
 
-export default TrainDate;
+export default Search;

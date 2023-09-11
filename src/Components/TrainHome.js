@@ -91,7 +91,6 @@ class TrainHome extends Component {
                                                             marginTop: '10px',
                                                             whiteSpace: 'nowrap'
                                                         }}
-                                                        disabled={new Date(train.date) < currentDate}
                                                     >
                                                         BOOK TICKET
                                                     </button>

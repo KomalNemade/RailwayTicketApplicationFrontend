@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-class AdminHeader extends Component {
+class UserHeader extends Component {
     constructor(props) {
         super(props);
         this.handleLogout = this.handleLogout.bind(this);
@@ -25,15 +25,12 @@ class AdminHeader extends Component {
                                 <li className="nav-item">
                                     <a className="nav-link active" aria-current="page" href="/UserHome">Home</a>
                                 </li>
-                                <li className="nav-item">
-                                    <a className="nav-link active" href="/AddTrain">Add Train</a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link active" href="/Bookings">Bookings</a>
+                                <li  className="nav-item">
+                                    <a className="nav-link active" aria-current="page" href="/search">Search</a>
                                 </li>
                             </ul>
                             <span className="navbar-brand"> Welcome {this.props.userRole}</span>
-                                    <button className="btn btn-outline-info" onClick={this.handleLogout}>LOGOUT</button>
+                            <button className="btn btn-outline-info" onClick={this.handleLogout}>LOGOUT</button>
 
                         </div>
                     </div>
@@ -43,4 +40,4 @@ class AdminHeader extends Component {
     }
 }
 
-export default AdminHeader;
+export default UserHeader;
