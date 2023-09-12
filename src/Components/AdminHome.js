@@ -76,9 +76,7 @@ class AdminHome extends Component {
                                             <td style={{fontSize:'20px'}}>{train.destination}</td>
                                             <td style={{fontSize:'20px'}}>{train.date}</td>
                                             <td style={{fontSize:'20px'}}>{train.seat}</td>
-                                            <td style={{fontSize:'20px'}}>{train.price}</td>
-                                            <td>
-                                                </td>
+                                            <td style={{fontSize:'20px'}}>{train.price}/-</td>
                                         </tr>
                                 )}
                                 </tbody>

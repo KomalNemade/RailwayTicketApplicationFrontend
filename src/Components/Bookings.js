@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import star from "../img/star.avif";
 import UserService from "../Services/UserService";
-import CarouselComponent from "./CarouselComponent";
 
 class Bookings extends Component {
     constructor(props) {
@@ -11,12 +10,12 @@ class Bookings extends Component {
         }
     }
     componentDidMount() {
-            UserService.getBookings().then((res) => {
-                this.setState({
-                    orders: res.data
-                });
+        UserService.getBookings().then((res) => {
+            this.setState({
+                orders: res.data
             });
-        }
+        });
+    }
     render() {
         return (
             <div>
@@ -36,7 +35,6 @@ class Bookings extends Component {
                                         <th style={{fontSize:'20px'}}><b>Gender</b></th>
                                         <th style={{fontSize:'20px'}}><b>MobileNo</b></th>
                                         <th style={{fontSize:'20px'}}><b>EmailId</b></th>
-                                        <th style={{fontSize:'20px'}}><b>Quantity</b></th>
                                         <th style={{fontSize:'20px'}}><b>Price</b></th>
                                     </tr>
                                     </thead>
@@ -50,8 +48,7 @@ class Bookings extends Component {
                                                 <td style={{fontSize:'20px'}}>{order.gender}</td>
                                                 <td style={{fontSize:'20px'}}>{order.mobileNo}</td>
                                                 <td style={{fontSize:'20px'}}>{order.emailId}</td>
-                                                <td style={{fontSize:'20px'}}>{order.quantity}</td>
-                                                <td style={{fontSize:'20px'}}>{order.price}</td>
+                                                <td style={{fontSize:'20px'}}>{order.price}/-</td>
                                             </tr>
                                     )}
                                     </tbody>

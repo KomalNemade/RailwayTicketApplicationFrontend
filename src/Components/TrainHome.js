@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import star from "../img/star.avif";
 import UserService from "../Services/UserService";
 import "../App.css";
-import CarouselComponent from "./CarouselComponent";
+
 
 class TrainHome extends Component {
     constructor(props) {

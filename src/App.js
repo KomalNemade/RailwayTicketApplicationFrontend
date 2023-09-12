@@ -40,19 +40,19 @@ function App() {
             <Router>
                 {renderHeader()}
 
-                    <Switch>
-                        <Route path="/" exact component={Home} />
-                        <Route path="/register" exact component={Signup} />
-                        <Route
-                            path="/login"
-                            render={() => <Signin setUserRole={setUserRole} setemail={setemail} />}
-                        />
-                        <Route path="/UserHome" render={() => renderUserPage()} />
-                        <Route path="/AddTrain" render={() => <AddTrain />} />
-                        <Route path="/search" exact component={Search} />
-                        <Route path="/BookTicket" render={() => <BookTicket email={email} />} />
-                        <Route path="/Bookings" render={() => <Bookings email={email} />} />
-                    </Switch>
+                <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/register" exact component={Signup} />
+                    <Route
+                        path="/login"
+                        render={() => <Signin setUserRole={setUserRole} setemail={setemail} />}
+                    />
+                    <Route path="/UserHome" render={() => renderUserPage()} />
+                    <Route path="/AddTrain" render={() => <AddTrain />} />
+                    <Route path="/search" exact component={Search} />
+                    <Route path="/BookTicket" render={() => <BookTicket email={email} />} />
+                    <Route path="/Bookings" render={() => <Bookings email={email} />} />
+                </Switch>
                 <Footer />
             </Router>
         </div>

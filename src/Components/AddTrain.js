@@ -184,7 +184,7 @@ function AddTrain() {
                                     type="text"
                                     value={formData.price}
                                     onChange={(e) =>
-                                        setFormData({ ...formData, price: e.target.value })
+                                        setFormData({ ...formData, price: e.target.value})
                                     }
                                     className={errors.price && "is-invalid"}
                                 />

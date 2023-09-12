@@ -5,6 +5,7 @@ const User_Login="http://localhost:8085/user/login";
 const Trains_GET="http://localhost:8085/trains/";
 const GET_Train="http://localhost:8085/trains/search"
 const Add_Train="http://localhost:8085/trains/add";
+const Train_update="http://localhost:8085/trains/train/";
 const Get_TrainById="http://localhost:8085/trains/id/";
 const Add_Ticket="http://localhost:8085/ticket/add";
 const Get_Tickets="http://localhost:8085/ticket/";
@@ -25,14 +26,14 @@ class UserService {
         return axios.get(Trains_GET);
     }
 
-   getTrain(src,des){
+    getTrain(src,des){
         return axios.get(GET_Train,{
-           params: {
-               source: src,
-                   destination: des
-           }
-       })
-   }
+            params: {
+                source: src,
+                destination: des
+            }
+        })
+    }
 
     addTrain(train) {
         return axios.post(Add_Train,train);
@@ -48,10 +49,9 @@ class UserService {
     getBookings(){
         return axios.get(Get_Tickets);
     }
-
-
-
-
+    updateTrain(id,train){
+        return axios.put(Train_update+id,train);
+    }
 
 }
 export default new UserService();

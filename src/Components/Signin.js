@@ -9,7 +9,6 @@ import {
     from 'mdb-react-ui-kit';
 import UserService from "../Services/UserService";
 import Home from "./Home";
-import CryptoJS from "crypto-js";
 import {toast, ToastContainer} from "react-toastify";
 
 

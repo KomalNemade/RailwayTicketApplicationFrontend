@@ -2,80 +2,88 @@ import React, {useEffect, useState} from "react";
 import UserService from "../Services/UserService";
 import {MDBCard, MDBCardBody, MDBContainer, MDBInput} from "mdb-react-ui-kit";
 import {MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader} from "mdbreact";
-import validator from "validator";
 import star from "../img/star.avif";
-import * as emailjs from "@emailjs/browser";
 
-function BookTicket(props){
+function BookTicket(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const train = JSON.parse(urlParams.get('train'));
 
     const [formData, setFormData] = useState({
-        quantity: '',
-        cardno:'',
         name:'',
         age:'',
         berth:'',
         gender:'',
         mobileNo:'',
         emailId:'',
-        price:'',
+        price:train.price,
     });
 
     const [showForm, setShowForm] = useState(true);
-    const [ticketPrice, setTicketPrice] = useState(null);
-    const [ticketQuantity, setTicketQuantity] = useState(null);
+    /*const [ticketPrice, setTicketPrice] = useState(null);
+    const [ticketQuantity, setTicketQuantity] = useState(null);*/
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [orderData, setOrderData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [passengers, setPassengers] = useState([]);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const train = JSON.parse(urlParams.get('train'));
+    const mobileNumberPattern = /^[0-9]{10}$/;
+
     const Book = async (e) => {
         e.preventDefault();
         //Validations
 
         const newErrors = {};
-        if (!formData.quantity) {
-            newErrors.quantity = 'Quantity is required';
-        }else if(!validator.isNumeric(formData.quantity)){
-            newErrors.quantity='Invalid Quantity format';
+        if (!formData.name) {
+            newErrors.name = "Name is required";
         }
+        if (!formData.age) {
+            newErrors.age = "Age is required";
+        } else if (!/^\d+$/.test(formData.age)) {
+            newErrors.age = "Invalid Age format";
+        }
+
+        if (!formData.emailId) {
+            newErrors.emailId = "Email Id is required";
+        } else if (!/^\S+@\S+\.\S+$/.test(formData.emailId)) {
+            newErrors.emailId = "Invalid Email format";
+        }
+
+        if (!mobileNumberPattern.test(formData.mobileNo)) {
+            newErrors.mobileNo = 'Invalid Mobile Number (10 digits required)';
+        }
+
+
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            const totalPrice = ticketPrice * formData.quantity;
-            const order = {
-                quantity: formData.quantity,
-                price: totalPrice,
-                name:formData.name,
-                age:formData.age,
-                berth:formData.berth,
-                gender:formData.gender,
-                mobileNo:formData.mobileNo,
-                emailId:formData.emailId,
-            }
-            setOrderData(order);
+
+            setPassengers([...passengers, formData]);
             setShowPaymentModal(true);
             setShowForm(false);
         }
     }
-   const handlePayment = async () => {
+    const handlePayment = async () => {
         const newErrors = {};
-
-        if (!formData.cardno) {
-            newErrors.cardno = 'Card Number is required';
-        }else if(!validator.isNumeric(formData.cardno)){
-            newErrors.cardno='Invalid Card format';
-        }
 
         setErrors(newErrors);
         if(Object.keys(newErrors).length === 0) {
+            const uptrain={
+                trainName: train.trainName,
+                trainNo: train.trainNo,
+                source: train.source,
+                destination: train.destination,
+                date: train.date,
+                seat:train.seat-passengers.length,
+                price:train.price,
+            };
 
             try {
                 setLoading(true);
-                const response = await UserService.addTicket(orderData);
-                console.log('Order placed:', response.data);
+                const response = await UserService.addTicket(passengers);
+                console.log(response.data)
+                const res= await UserService.updateTrain(train.id,uptrain);
+
                 setLoading(false);
                 setShowPaymentModal(false);
                 setShowSuccessModal(true);
@@ -89,28 +97,27 @@ function BookTicket(props){
 
     const handleSuccessModalClose = () => {
         setShowSuccessModal(false);
-        //UserService.updateTicket(upticket)
-       window.location.replace("/OrderHistory")
+        window.location.replace("/UserHome")
     };
     const cancelPayment=()=>{
         setShowPaymentModal(false);
         window.location.replace("/UserHome")
     }
-    useEffect(() => {
-            const fetchTicketPrice = async () => {
-                try {
-                    const response = await UserService.getTrainById(train.id);
-                    //console.log(response)
-                    setTicketPrice(response.data.price);
-                    setTicketQuantity(response.data.seat);
-                } catch (error) {
-                    console.error("Error fetching ticket price:", error);
-                    setTicketPrice(null);
-                }
-            };
-            fetchTicketPrice();
+    /*useEffect(() => {
+        const fetchTicketPrice = async () => {
+            try {
+                const response = await UserService.getTrainById(train.id);
+                //console.log(response)
+                setTicketPrice(response.data.price);
+                setTicketQuantity(response.data.seat);
+            } catch (error) {
+                console.error("Error fetching ticket price:", error);
+                setTicketPrice(null);
+            }
+        };
+        fetchTicketPrice();
 
-    }, []);
+    }, []);*/
     const handlegenderchange=(e)=>{
         e.preventDefault();
         setFormData({ ...formData, gender: e.target.value })
@@ -119,6 +126,22 @@ function BookTicket(props){
         e.preventDefault();
         setFormData({ ...formData, berth: e.target.value })
     }
+    const addAnotherPassenger = () => {
+        if (formData.name && formData.age) {
+            setPassengers([...passengers, formData]);
+            setFormData({
+                name: "",
+                age: "",
+                berth: "",
+                gender: "",
+                mobileNo: "",
+                emailId: "",
+                price: train.price,
+            });
+        }
+        console.log(passengers);
+    };
+
 
     return (
         <div style={{ backgroundImage: `url(${star})`, backgroundRepeat: 'no-repeat',
@@ -167,29 +190,37 @@ function BookTicket(props){
                                          size="lg"
                                          id="berth"
                                          value={formData.berth}
-                                         onChange={handleberthchange}>
+                                         onChange={handleberthchange}
+                                required={true}>
+                                    <option value="" disabled> Select Berth</option>
                                     <option value={"Lower"}>Lower</option>
                                     <option value={"Middle"}>Middle</option>
                                     <option value={"Upper"}>Upper</option>
                                 </select>
                                 <br/>
                                 <label>Gender</label>
-                                <select  className="form-control"
-                                         size="lg"
-                                         id="berth"
-                                         value={formData.gender}
-                                onChange={handlegenderchange}>
+                                <select
+                                    className="form-control"
+                                    size="lg"
+                                    id="berth"
+                                    value={formData.gender}
+                                    onChange={handlegenderchange}
+                                    required={true} >
+                                    <option value="" disabled>
+                                        Select Gender
+                                    </option>
                                     <option value={"Male"}>Male</option>
-                                    <option value={"Female"}> Female</option>
+                                    <option value={"Female"}>Female</option>
                                     <option value={"Others"}>Others</option>
                                 </select>
+
                                 <br/>
                                 <label>Mobile No</label>
                                 <MDBInput
                                     wrapperClass="mb-1"
                                     size="lg"
                                     id="mobileNo"
-                                    type="number"
+                                    type="text"
                                     value={formData.mobileNo}
                                     onChange={(e) =>
                                         setFormData({ ...formData, mobileNo: e.target.value })
@@ -215,13 +246,11 @@ function BookTicket(props){
                                 {errors.emailId && (
                                     <div className="text-danger">{errors.emailId}</div>
                                 )}
-                                <p>Seats available: {ticketQuantity}</p>
-                                <label>Required Seats</label>
-                                <MDBInput wrapperClass='mb-1'  size='lg' id='quantity' type='number'value={formData.quantity} min={ticketQuantity}
-                                          onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                                          className={errors.quantity && 'is-invalid'}
-                                />{errors.quantity && <div className='text-danger'>{errors.quantity}</div>}
-                                <p>Price per ticket: ₹ {ticketPrice}</p>
+                                <p>Seats available: {train.seat}</p>
+                                <p>Price per ticket: ₹ {train.price}</p>
+
+                                <button onClick={addAnotherPassenger} className="mb-4 w-100 btn btn-dark">Add Another Passenger</button>
+
                                 <button onClick={Book} className='mb-4 w-100 btn btn-dark'>Book</button>
 
                             </MDBCardBody>
@@ -235,8 +264,8 @@ function BookTicket(props){
                 <MDBModal isOpen={showPaymentModal} toggle={() => setShowPaymentModal(false)}>
                     <MDBModalHeader toggle={() => setShowPaymentModal(false)}>Confirm Payment</MDBModalHeader>
                     <MDBModalBody>
-                        <p>Total Price: ₹{ticketPrice * formData.quantity}</p>
-                        <p>No of seats: {formData.quantity}</p>
+                        <p>Total Price: ₹{train.price * passengers.length}</p>
+                        <p>No of passengers: {passengers.length}</p>
                         <br/>
                         <label>Debit Card Number</label>
                         <MDBInput wrapperClass='mb-1' size='lg' id='cardno' type='number' value={formData.cardno}
@@ -257,8 +286,8 @@ function BookTicket(props){
                 <MDBModal isOpen={showSuccessModal} toggle={handleSuccessModalClose}>
                     <MDBModalHeader toggle={handleSuccessModalClose}>Payment Successful</MDBModalHeader>
                     <MDBModalBody>
-                        <p>Total Price: {ticketPrice  * formData.quantity}</p>
-                        <p>Quantity: {formData.quantity}</p>
+                        <p>Total Price: {train.price  * passengers.length}</p>
+                        <p>Quantity: {passengers.length}</p>
                     </MDBModalBody>
                     <MDBModalFooter>
                         <button className='btn btn-primary' onClick={handleSuccessModalClose}>
@@ -272,3 +301,13 @@ function BookTicket(props){
     );
 }
 export default BookTicket;
+
+
+
+
+
+
+
+
+
+

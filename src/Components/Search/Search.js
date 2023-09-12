@@ -2,9 +2,6 @@ import React, {Component, useState} from 'react';
 import star from "../../img/star.avif";
 import {MDBCard, MDBCardBody, MDBContainer, MDBInput} from "mdb-react-ui-kit";
 import UserService from "../../Services/UserService";
-import CarouselComponent from "../CarouselComponent";
-import Home from "../Home";
-import * as trains from "react-bootstrap/ElementChildren";
 
 function Search(){
     const[sdate,setDate]=useState('');
